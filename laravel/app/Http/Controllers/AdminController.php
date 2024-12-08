@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\Order;
 use App\Models\Product;
+use App\Models\Order;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('admin');
+        $this->middleware('auth');
     }
 
     public function dashboard()
@@ -19,6 +19,7 @@ class AdminController extends Controller
         $productCount = Product::count();
         $orderCount = Order::count();
         $categoryCount = Category::count();
+        
         return view('admin.dashboard', compact('productCount', 'orderCount', 'categoryCount'));
     }
 
@@ -96,5 +97,55 @@ class AdminController extends Controller
         $order->update($validatedData);
 
         return redirect()->route('admin.orders')->with('success', 'Order status updated successfully!');
+    }
+
+    public function categories()
+    {
+        $categories = Category::paginate(10);
+        return view('admin.categories.index', compact('categories'));
+    }
+
+    public function createCategory()
+    {
+        return view('admin.categories.create');
+    }
+
+    public function storeCategory(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|max:255|unique:categories',
+            'description' => 'nullable',
+        ]);
+
+        Category::create($validatedData);
+
+        return redirect()->route('admin.categories')->with('success', 'Category created successfully!');
+    }
+
+    public function editCategory(Category $category)
+    {
+        return view('admin.categories.edit', compact('category'));
+    }
+
+    public function updateCategory(Request $request, Category $category)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|max:255|unique:categories,name,' . $category->id,
+            'description' => 'nullable',
+        ]);
+
+        $category->update($validatedData);
+
+        return redirect()->route('admin.categories')->with('success', 'Category updated successfully!');
+    }
+
+    public function deleteCategory(Category $category)
+    {
+        if ($category->products()->count() > 0) {
+            return back()->with('error', 'Cannot delete category with associated products.');
+        }
+
+        $category->delete();
+        return redirect()->route('admin.categories')->with('success', 'Category deleted successfully!');
     }
 }

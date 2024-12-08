@@ -11,7 +11,7 @@
             <p>{{ $product->description }}</p>
             <p><strong>Price: ${{ number_format($product->price, 2) }}</strong></p>
             <p>Category: {{ $product->category->name }}</p>
-            <form action="{{ route('cart.add') }}" method="POST">
+            <form action="{{ route('cart.add', $product->id) }}" method="POST">
                 @csrf
                 <input type="hidden" name="id" value="{{ $product->id }}">
                 <div class="form-group">

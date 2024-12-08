@@ -1,0 +1,6 @@
+{
+    "require": {
+        "laravel/ui": "^4.6",
+        "stripe/stripe-php": "^16.3"
+    }
+}

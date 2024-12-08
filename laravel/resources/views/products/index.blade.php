@@ -9,11 +9,16 @@
                 <div class="card">
                     <img src="{{ asset('images/placeholder.jpg') }}" class="card-img-top" alt="{{ $product->name }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ $product->name }}</h5>
-                        <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
-                        <p class="card-text"><strong>Price: ${{ number_format($product->price, 2) }}</strong></p>
-                        <a href="{{ route('products.show', $product) }}" class="btn btn-primary">View Details</a>
-                    </div>
+    <h5 class="card-title">{{ $product->name }}</h5>
+    <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
+    <p class="card-text"><strong>Price: ${{ number_format($product->price, 2) }}</strong></p>
+    <a href="{{ route('products.show', $product) }}" class="btn btn-primary">View Details</a>
+    
+    <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
+        @csrf
+        <button type="submit" class="btn btn-success">Add to Cart</button>
+    </form>
+</div>
                 </div>
             </div>
         @endforeach
